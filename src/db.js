@@ -17,17 +17,10 @@ async function initDb() {
         CREATE TABLE IF NOT EXISTS tasks (
             id SERIAL PRIMARY KEY,
             title VARCHAR(255) NOT NULL,
-            description TEXT,
-            status VARCHAR(50) DEFAULT 'pending',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            done BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT NOW()
         );
     `);
 }
-
-// Simple health check
-pool.on('connect', () => {
-    console.log('✅ Database connected');
-});
 
 module.exports = { pool, initDb};
