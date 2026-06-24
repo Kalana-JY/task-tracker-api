@@ -1,0 +1,20 @@
+{
+  "name": "task-tracker-api",
+  "version": "1.0.0",
+  "description": "A simple Task Tracker API built to practice DevOps tooling: Docker, CI/CD, Kubernetes, Terraform, and Ansible.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "node --test tests/**/*.test.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.12.0",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "license": "MIT"
+}

@@ -13,14 +13,14 @@ const pool = new Pool({
 });
 
 async function initDb() {
-    await pool.query(`
-        CREATE TABLE IF NOT EXISTS tasks (
-            id SERIAL PRIMARY KEY,
-            title VARCHAR(255) NOT NULL,
-            done BOOLEAN DEFAULT FALSE,
-            created_at TIMESTAMP DEFAULT NOW()
-        );
-    `);
+            await pool.query(`
+                CREATE TABLE IF NOT EXISTS tasks (
+                    id SERIAL PRIMARY KEY,
+                    title VARCHAR(255) NOT NULL,
+                    done BOOLEAN DEFAULT FALSE,
+                    created_at TIMESTAMP DEFAULT NOW()
+                );
+            `);
 }
 
 module.exports = { pool, initDb};
