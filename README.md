@@ -1,7 +1,8 @@
 # Task Tracker API — Dockerized Node.js + PostgreSQL
 
 A small REST API for tracking tasks, built specifically to practice core DevOps
-skills: containerization, multi-stage Docker builds, and service orchestration with Docker Compose.
+skills: containerization, multi-stage Docker builds, and service orchestration with Docker Compose CI/CD (GitHub Actions, Jenkins), Infrastructure as Code
+(Terraform), configuration management (Ansible), and Kubernetes deployment.
 
 ## Tech stack
 
@@ -103,6 +104,33 @@ npm test
   endpoint (`/health`) is reused later for Kubernetes liveness/readiness probes.
 - **Config via environment variables** — no hardcoded credentials in code,
   following the [12-factor app](https://12factor.net/config) methodology.
+
+## CI/CD Pipeline (GitHub Actions)
+
+Every push and pull request to `main` triggers `.github/workflows/ci-cd.yml`:
+
+1. **Test job** — spins up a real PostgreSQL service container (mirroring
+   `docker-compose.yml`), installs dependencies, and runs `npm test`.
+2. **Build & push job** — runs only on pushes to `main` (not on PRs, and never
+   on forked PRs, which lack registry credentials). Builds the Docker image
+   using Buildx with GitHub Actions layer caching, then pushes it to
+   [GitHub Container Registry](https://ghcr.io) tagged both `:latest` and
+   with the commit SHA, so any image can be traced back to the exact commit
+   that produced it.
+
+No secrets need to be configured manually — `GITHUB_TOKEN` is generated
+automatically per workflow run and scoped with `packages: write` permission
+in the workflow file itself.
+
+Once it runs at least once, the built image is pulled with:
+
+```bash
+docker pull ghcr.io/<your-github-username>/<repo-name>:latest
+```
+
+(Note: the package may need to be set to "Public" the first time, under your
+GitHub repo → Packages → package settings, otherwise `docker pull` requires
+authentication.)
 
 ## License
 
