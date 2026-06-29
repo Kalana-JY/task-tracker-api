@@ -35,4 +35,7 @@ coverage/
 
 # OS-specific files
 .DS_Store
-Thumbs.db
+Thumbs.db
+
+# Kubernetes secrets
+k8s-task-tracker/secret.yaml

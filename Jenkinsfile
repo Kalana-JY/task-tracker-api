@@ -4,7 +4,7 @@ pipeline {
     environment {
         // ghcr.io requires lowercase image names — same fix you already
         // applied in the GitHub Actions version of this pipeline.
-        IMAGE_NAME = "ghcr.io/kalana-jy/task-tracker-api"
+        IMAGE_NAME = "ghcr.io/${env.GITHUB_USERNAME}/task-tracker-api"
         IMAGE_TAG  = "${env.BUILD_NUMBER}"
     }
 
