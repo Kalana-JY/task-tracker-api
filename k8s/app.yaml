@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-tracker-api
+spec:
+  replicas: 2  # Two identical pods, load-balanced by the Service below --
+               # the core Kubernetes concept this project demonstrates
+  selector:
+    matchLabels:
+      app: task-tracker-api
+  template:
+    metadata:
+      labels:
+        app: task-tracker-api
+    spec:
+      containers:
+        - name: task-tracker-api
+          # Update this to your actual ghcr.io image path (all lowercase).
+          image: ghcr.io/kalana-jy/task-tracker-api:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DB_HOST
+              value: postgres  # resolves via the Postgres Service's DNS name
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: POSTGRES_DB
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: POSTGRES_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: POSTGRES_PASSWORD
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+# Exposes the app outside the cluster. type: NodePort opens a port on the
+# Minikube node itself (rather than ClusterIP, which is internal-only, or
+# LoadBalancer, which needs a cloud provider's actual load balancer --
+# neither fits a local learning cluster as well as NodePort does).
+apiVersion: v1
+kind: Service
+metadata:
+  name: task-tracker-api
+spec:
+  type: NodePort
+  selector:
+    app: task-tracker-api
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30080
