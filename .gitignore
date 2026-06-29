@@ -39,3 +39,4 @@ Thumbs.db
 
 # Kubernetes secrets
 k8s-task-tracker/secret.yaml
+k8s/secret.yaml
